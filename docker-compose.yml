@@ -1,0 +1,9 @@
+# docker-compose.yml
+services:
+  icecast:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./recordings:/recordings:ro
+    restart: unless-stopped
