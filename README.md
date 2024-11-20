@@ -1,13 +1,7 @@
-# Simple Continuous Broadcast Project
+# RadioFlow+ : Push-Button Broadcasting
 
-A Docker-based streaming server that continuously broadcasts MP3 files using Icecast2 and Liquidsoap.
+Transform your MP3 collection into your own streaming station in minutes. With RadioFlow+, if you can copy files to a folder, you can run your own music station. Drop in your mixtapes, podcasts, or music collection, and instantly start broadcasting to listeners worldwide. It's like having your own Spotify or Pandora, but it's all yours - simple, streamlined, and completely under your control.
 
-## Design Philosophy
-This project implements a minimalist, headless streaming approach:
-- Deliberately excludes the Icecast admin panel and status pages
-- Focuses solely on continuous audio streaming functionality
-- Provides a lightweight, resource-efficient solution
-- No GUI or web interface to manage - just pure streaming
 
 ## Prerequisites
 
@@ -16,10 +10,6 @@ For Ubuntu 22.04 users:
 # Install Docker and Docker Compose from Ubuntu repository
 sudo apt update
 sudo apt install docker.io docker-compose
-sudo systemctl enable --now docker
-
-# Add your user to docker group (requires logout/login to take effect)
-sudo usermod -aG docker $USER
 ```
 
 The Ubuntu 22.04 repository provides:
@@ -30,6 +20,7 @@ The Ubuntu 22.04 repository provides:
 Other requirements:
 - Git (`sudo apt install git`)
 - At least one MP3 file to stream
+- The repo has 3 sample mp3's
 
 ## Quick Start
 
@@ -120,26 +111,19 @@ The server will continuously stream and replay your audio files indefinitely as 
 
 ### Common Issues
 
-1. **Docker permissions issues**
-   ```bash
-   # If you get a permission denied error
-   sudo chmod 666 /var/run/docker.sock
-   
-   # Or log out and back in after adding your user to docker group
-   ```
 
-2. **Stream not accessible**
+1. **Stream not accessible**
    - Verify Docker container is running: `docker ps`
    - Check container logs: `docker-compose logs`
    - Ensure port 8000 isn't being used by another application
    - Check if UFW is blocking the port: `sudo ufw status`
 
-3. **No audio playing**
+2. **No audio playing**
    - Confirm MP3 files are present in the recordings directory
    - Check file permissions (should be readable)
    - Verify MP3 file format compatibility
 
-4. **Container won't start**
+3. **Container won't start**
    ```bash
    # Check detailed logs
    docker-compose logs --tail=100
@@ -151,7 +135,7 @@ The server will continuously stream and replay your audio files indefinitely as 
    docker-compose build --no-cache
    ```
 
-5. **Permission Issues**
+4. **Permission Issues**
    ```bash
    # Fix permissions on recordings directory
    chmod -R 644 recordings/*.mp3
@@ -173,55 +157,10 @@ output.icecast(
 )
 ```
 
-### Multiple Streams
-
-To add another mount point, add to `config/icecast.xml`:
-```xml
-<mount>
-    <mount-name>/another_stream</mount-name>
-    <username>source</username>
-    <password>source_password</password>
-</mount>
-```
-
-### System Service (Optional)
-To run the stream as a system service on Ubuntu:
-
-1. Create a service file:
-```bash
-sudo nano /etc/systemd/system/stream-server.service
-```
-
-2. Add the following content:
-```ini
-[Unit]
-Description=Streaming Server
-Requires=docker.service
-After=docker.service
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-WorkingDirectory=/path/to/project
-ExecStart=/usr/bin/docker-compose up -d
-ExecStop=/usr/bin/docker-compose down
-TimeoutStartSec=0
-
-[Install]
-WantedBy=multi-user.target
-```
-
-3. Enable and start the service:
-```bash
-sudo systemctl enable stream-server
-sudo systemctl start stream-server
-```
-
 ## Security Notes
 
 - Change default passwords in `config/icecast.xml` before deploying to production
 - Consider using a reverse proxy (like Nginx) for SSL termination
-- Restrict access to admin interface if exposed publicly
 - If using UFW firewall:
   ```bash
   sudo ufw allow 8000/tcp
@@ -237,4 +176,9 @@ sudo systemctl start stream-server
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+RadioFlow+ is open source software licensed under the MIT License. You can freely use, modify, and distribute this software. However, it comes with ABSOLUTELY NO WARRANTY. See the LICENSE file for details.
+
+
+## Parting Shot 
+
+As James Evan Pilato says, Don't Hate The Media Become The Media
