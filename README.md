@@ -26,7 +26,7 @@ Other requirements:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Better-Call-Jason/simple-broadcast-media-stream-icecast2.git
+git clone https://github.com/Better-Call-Jason/RadioFlowPlus.git
 cd simple-continuous-broadcast-project
 ```
 
@@ -156,6 +156,59 @@ output.icecast(
   ...
 )
 ```
+
+### Nginx Reverse Proxy Setup
+
+For production deployments, it's recommended to use Nginx as a reverse proxy to handle SSL termination and provide better security.
+
+1. Install Nginx:
+```bash
+sudo apt update
+sudo apt install nginx
+```
+
+2. Create a new site configuration:
+```bash
+sudo nano /etc/nginx/sites-available/radioflow
+```
+
+Add the following configuration:
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;  # Replace with your domain
+
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /stream {
+        proxy_pass http://localhost:8000/stream;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_buffering off;  # Important for streaming
+    }
+}
+```
+
+3. Enable the site and restart Nginx:
+```bash
+sudo ln -s /etc/nginx/sites-available/radioflow /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+4. For SSL support, install Certbot:
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d your-domain.com
+```
+
+Your stream will now be available at `https://your-domain.com/stream`
 
 ## Security Notes
 
