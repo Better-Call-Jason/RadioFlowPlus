@@ -35,7 +35,7 @@ Other requirements:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/simple-continuous-broadcast-project.git
+git clone https://github.com/Better-Call-Jason/simple-broadcast-media-stream-icecast2.git
 cd simple-continuous-broadcast-project
 ```
 
