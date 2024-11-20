@@ -49,7 +49,7 @@ docker-compose up -d    # Note: Ubuntu 22.04 uses docker-compose (with hyphen)
 ## Project Structure
 
 ```
-simple-continuous-broadcast-project/
+RadioFlowPlus/
 ├── config/
 │   ├── icecast.xml        # Icecast2 configuration
 │   └── liquidsoap.liq     # Liquidsoap streaming configuration
